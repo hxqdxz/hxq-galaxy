@@ -1,0 +1,3336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="theme-color" content="#06040f" />
+<title>HXQ 的星系 · 默契挑战</title>
+<style>/* ============================================================
+ *  HXQ 的星系 · 默契挑战  —  样式
+ *  移动端优先，微信内置浏览器可用；无外部字体/图片依赖
+ * ============================================================ */
+:root {
+  --bg-0: #06040f;
+  --bg-1: #0d0822;
+  --bg-2: #150c33;
+  --card: rgba(255, 255, 255, 0.055);
+  --card-2: rgba(255, 255, 255, 0.085);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --text: #f5f2ff;
+  --muted: #a9a2c9;
+  --muted-2: #7d769e;
+  --gold: #ffd166;
+  --gold-2: #ffb01f;
+  --violet: #8b6cff;
+  --mint: #5ce1e6;
+  --pink: #ff8ac9;
+  --danger: #ff6b8a;
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.5);
+  --r-xl: 28px;
+  --r-lg: 22px;
+  --r-md: 16px;
+  --r-sm: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro SC", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg-0);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- 背景 ---------- */
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 760px at 12% -8%, rgba(123, 92, 255, 0.30), transparent 62%),
+    radial-gradient(880px 620px at 108% 8%, rgba(255, 122, 198, 0.16), transparent 62%),
+    radial-gradient(900px 720px at 50% 118%, rgba(92, 225, 230, 0.10), transparent 60%),
+    linear-gradient(180deg, #06040f 0%, #0c0721 52%, #130a2c 100%);
+}
+
+#bgStars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ---------- 布局 ---------- */
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(20px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 460px;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.screen.active {
+  display: flex;
+  animation: screenIn 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen-wide {
+  max-width: 520px;
+}
+
+@keyframes screenIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- 通用按钮 ---------- */
+.btn {
+  appearance: none;
+  border: 0;
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1c1303;
+  background: linear-gradient(135deg, #ffe29a 0%, #ffc94d 52%, #ffb01f 100%);
+  box-shadow: 0 16px 34px rgba(255, 176, 31, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease, opacity 0.16s ease;
+  touch-action: manipulation;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+  filter: brightness(0.98);
+}
+
+.btn:disabled {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* ---------- 开始页 ---------- */
+.start-top {
+  text-align: center;
+  padding: 10px 4px 2px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.brand::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(40px, 12vw, 56px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #fff8e6 0%, #ffd166 42%, #ff8ac9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 10px 30px rgba(255, 176, 31, 0.22));
+}
+
+.title-sub {
+  display: block;
+  font-size: 0.44em;
+  letter-spacing: 0.42em;
+  margin-top: 10px;
+  color: var(--muted);
+  background: none;
+  -webkit-text-fill-color: var(--muted);
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 16px 0 0;
+}
+
+.start-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.field-label {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.name-row {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.name-input {
+  width: 100%;
+  height: 56px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--text);
+  font-size: 19px;
+  letter-spacing: 0.14em;
+  padding: 0 62px 0 18px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.name-input::placeholder {
+  color: var(--muted-2);
+  letter-spacing: 0.04em;
+  font-size: 15px;
+}
+
+.name-input:focus {
+  border-color: rgba(255, 209, 102, 0.65);
+  box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.10);
+}
+
+.name-count {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12.5px;
+  color: var(--muted-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.field-hint {
+  color: var(--muted-2);
+  font-size: 12.5px;
+  margin: 0 0 14px;
+}
+
+.rules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.rule {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.rule b {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.15;
+}
+
+.rule span {
+  display: block;
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--muted-2);
+  line-height: 1.4;
+}
+
+.start-tip {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--muted-2);
+  margin: 2px 0 0;
+}
+
+.link-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(255, 255, 255, 0.18);
+}
+
+.link-btn:active {
+  color: var(--text);
+}
+
+.continue {
+  margin-top: 2px;
+}
+
+.continue .card {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--r-lg);
+}
+
+.continue .c-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.continue .c-title {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.continue .c-score {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.continue .c-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.mini-btn {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 11px;
+  padding: 9px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mini-btn.gold {
+  background: linear-gradient(135deg, #ffe29a, #ffc94d);
+  color: #1c1303;
+  border-color: transparent;
+}
+
+/* ---------- 答题页 ---------- */
+.quiz-head {
+  padding: 2px 2px 0;
+}
+
+.quiz-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 9px;
+}
+
+.quiz-meta .phase {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.quiz-meta .phase.bonus {
+  color: var(--mint);
+}
+
+.progress {
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #8b6cff, #ff8ac9 55%, #ffd166);
+  box-shadow: 0 0 16px rgba(255, 138, 201, 0.45);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.qcard {
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qbadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.qbadge span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 40px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #241a02;
+  background: linear-gradient(135deg, #ffe29a, #ffc94d);
+}
+
+.qbadge .q-tag {
+  font-size: 11.5px;
+  color: var(--muted-2);
+  letter-spacing: 0.1em;
+}
+
+.qtext {
+  margin: 0 0 4px;
+  font-size: 19.5px;
+  line-height: 1.55;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  word-break: break-word;
+}
+
+.qhint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--muted-2);
+  line-height: 1.6;
+  min-height: 1px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 15px;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  font-size: 15.5px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.14s ease,
+    box-shadow 0.18s ease;
+  animation: optIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  touch-action: manipulation;
+}
+
+.opt:nth-child(1) { animation-delay: 0.02s; }
+.opt:nth-child(2) { animation-delay: 0.06s; }
+.opt:nth-child(3) { animation-delay: 0.10s; }
+.opt:nth-child(4) { animation-delay: 0.14s; }
+
+@keyframes optIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.opt:active {
+  transform: scale(0.988);
+}
+
+.opt-key {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.07);
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.opt-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.opt-check {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  display: grid;
+  place-items: center;
+  transition: all 0.18s ease;
+}
+
+.opt-check::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid #2a1c00;
+  border-bottom: 2px solid #2a1c00;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.18s ease;
+  margin-top: -2px;
+}
+
+.opt.selected {
+  border-color: rgba(255, 209, 102, 0.7);
+  background: linear-gradient(100deg, rgba(255, 209, 102, 0.16), rgba(139, 108, 255, 0.10));
+  box-shadow: inset 0 0 0 1px rgba(255, 209, 102, 0.28), 0 12px 26px rgba(0, 0, 0, 0.28);
+}
+
+.opt.selected .opt-key {
+  background: linear-gradient(135deg, #ffe29a, #ffc94d);
+  color: #241a02;
+}
+
+.opt.selected .opt-check {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.opt.selected .opt-check::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+.footer-bar {
+  padding: 2px 0 0;
+}
+
+/* ---------- 解锁页 / 结果页 ---------- */
+.unlock-card {
+  text-align: center;
+  padding: 34px 22px 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+.unlock-card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto;
+  height: 70%;
+  background: radial-gradient(closest-side, rgba(255, 209, 102, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.unlock-emoji {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 16px;
+  animation: pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.4) rotate(-12deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+
+.unlock-card h2 {
+  margin: 0 0 12px;
+  font-size: 25px;
+  letter-spacing: 0.02em;
+  background: linear-gradient(180deg, #fff8e6, #ffd166 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.unlock-card p {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.unlock-card p b {
+  color: var(--gold);
+  font-size: 17px;
+}
+
+.result-eyebrow {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+  letter-spacing: 0.3em;
+  margin: 12px 0 -4px;
+}
+
+.score-big {
+  text-align: center;
+  font-weight: 800;
+  font-size: 76px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #fff8e6 0%, #ffd166 55%, #ff8ac9 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 12px 34px rgba(255, 176, 31, 0.25));
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.score-big .score-max {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--muted);
+  -webkit-text-fill-color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 20px;
+}
+
+.bd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 14.5px;
+  color: var(--muted);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.bd-row:last-child {
+  border-bottom: 0;
+}
+
+.bd-row b {
+  color: var(--text);
+  font-size: 15.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-row.total b {
+  color: var(--gold);
+  font-size: 19px;
+}
+
+.result-msg {
+  text-align: center;
+  padding: 18px;
+}
+
+.result-msg h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.result-msg p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* ---------- 星系页 ---------- */
+.galaxy-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 2px 0;
+}
+
+.galaxy-head h2 {
+  margin: 0 0 5px;
+  font-size: 23px;
+  letter-spacing: 0.02em;
+  background: linear-gradient(100deg, #fff8e6, #ffd166 60%, #ff8ac9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.galaxy-head p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted-2);
+  letter-spacing: 0.02em;
+}
+
+.galaxy-card {
+  position: relative;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: radial-gradient(120% 100% at 50% 0%, #140d2e 0%, #080512 70%);
+  box-shadow: var(--shadow);
+  height: min(56vh, 460px);
+  min-height: 320px;
+}
+
+#galaxyCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+}
+
+.planet-tip {
+  position: absolute;
+  z-index: 3;
+  max-width: 220px;
+  padding: 10px 13px;
+  border-radius: 13px;
+  background: rgba(12, 8, 26, 0.92);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text);
+  pointer-events: none;
+  transform: translate(-50%, -112%);
+  white-space: nowrap;
+}
+
+.planet-tip b {
+  color: var(--gold);
+}
+
+.rank-card {
+  padding: 16px 16px 8px;
+}
+
+.rank-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 4px 10px;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+.rank-head span:last-child {
+  color: var(--muted-2);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.rank-list {
+  max-height: 208px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 2px 6px;
+}
+
+.rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.rank-row + .rank-row {
+  margin-top: 2px;
+}
+
+.rank-row.self {
+  background: linear-gradient(100deg, rgba(255, 209, 102, 0.13), rgba(139, 108, 255, 0.08));
+  border-color: rgba(255, 209, 102, 0.3);
+}
+
+.rank-no {
+  flex: 0 0 26px;
+  height: 26px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-row:nth-child(1) .rank-no {
+  background: linear-gradient(135deg, #ffe29a, #ffc94d);
+  color: #241a02;
+}
+
+.rank-row:nth-child(2) .rank-no {
+  background: rgba(235, 240, 255, 0.85);
+  color: #1b2030;
+}
+
+.rank-row:nth-child(3) .rank-no {
+  background: linear-gradient(135deg, #ffb08a, #e08a55);
+  color: #2a1406;
+}
+
+.rank-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-name .you {
+  margin-left: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #2a1c00;
+  background: var(--gold);
+  border-radius: 6px;
+  padding: 2px 6px;
+  vertical-align: 1px;
+}
+
+.rank-detail {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  color: var(--muted-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-score {
+  flex: 0 0 34px;
+  text-align: right;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-empty {
+  padding: 18px 8px;
+  text-align: center;
+  color: var(--muted-2);
+  font-size: 13px;
+}
+
+.galaxy-actions {
+  padding: 0;
+}
+
+.galaxy-note {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted-2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.sync-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 209, 102, 0.28);
+  background: rgba(255, 209, 102, 0.08);
+  color: #ffe7ad;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.sync-banner button {
+  margin-left: auto;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 209, 102, 0.45);
+  background: rgba(255, 209, 102, 0.14);
+  color: #ffe7ad;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 7px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ---------- 回顾弹窗 ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(4, 2, 10, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom));
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 480px;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  background: #120c26;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
+  animation: modalUp 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes modalUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 10px;
+}
+
+.modal-head h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.review-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-item {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 12px 14px;
+}
+
+.review-top {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.review-top .idx {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--muted);
+  padding-top: 1px;
+}
+
+.review-top .qi {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.review-result {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.review-result.ok {
+  color: #0c2c1c;
+  background: #5ce1a6;
+}
+
+.review-result.no {
+  color: #2c0c14;
+  background: #ff8fa3;
+}
+
+.review-detail {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted-2);
+  padding-left: 1px;
+}
+
+.review-detail b {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.review-detail .correct {
+  color: #7ff0c0;
+}
+
+/* ---------- 提示 ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(26px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(8px);
+  z-index: 60;
+  max-width: 86vw;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(20, 14, 40, 0.96);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast[hidden] {
+  display: none;
+}
+
+.loading-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-left: 6px;
+  animation: blink 1s infinite ease-in-out;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+/* ---------- 自测/演示辅助 ---------- */
+#selftest {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  z-index: 99;
+  max-height: 60vh;
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.88);
+  border: 1px solid #2f2;
+  color: #9f9;
+  font: 12px/1.5 Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+#selftest[hidden] {
+  display: none;
+}
+
+@media (max-width: 360px) {
+  .qtext {
+    font-size: 18px;
+  }
+  .opt {
+    font-size: 14.5px;
+    padding: 12px 12px;
+  }
+  .score-big {
+    font-size: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- 彩带 ---------- */
+.confetti {
+  position: fixed;
+  top: -14px;
+  width: 7px;
+  height: 13px;
+  border-radius: 2px;
+  z-index: 55;
+  pointer-events: none;
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0.2;
+  }
+}
+
+/* ---------- 回顾分组标题 ---------- */
+.review-head {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted-2);
+  letter-spacing: 0.14em;
+  margin: 12px 2px 2px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.review-head:first-child {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<canvas id="bgStars" aria-hidden="true"></canvas>
+
+<main class="app">
+  <!-- ============ 开始页 ============ -->
+  <section class="screen" id="screen-start">
+    <div class="start-top">
+      <div class="brand">2026 · 默契挑战</div>
+      <h1 class="title">HXQ<span class="title-sub">的星系</span></h1>
+      <p class="lead">15 道题，测测你和我之间的引力<br />离恒星越近，代表你越懂我</p>
+    </div>
+
+    <div class="card start-card">
+      <label class="field-label" for="nickname">给自己起个昵称</label>
+      <div class="name-row">
+        <input id="nickname" class="name-input" maxlength="5" placeholder="最多 5 个字" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <span id="nameCount" class="name-count">0/5</span>
+      </div>
+      <p class="field-hint">昵称会出现在属于你的星球上</p>
+      <button id="startBtn" class="btn primary" disabled>开始挑战</button>
+    </div>
+
+    <div class="rules">
+      <div class="rule"><b>10</b><span>普通题<br />每题 1 分</span></div>
+      <div class="rule"><b>5</b><span>隐藏题<br />每题 2 分</span></div>
+      <div class="rule"><b>20</b><span>满分<br />答完看排行</span></div>
+    </div>
+
+    <p class="start-tip">普通题答对 8 道，才会解锁隐藏附加题。<br />答完后，你会在星系里看到所有人的分数。</p>
+    <div id="continueBox" class="continue"></div>
+    <button id="viewBoardBtn" class="link-btn">先看看大家的星系 →</button>
+  </section>
+
+  <!-- ============ 答题页 ============ -->
+  <section class="screen" id="screen-quiz">
+    <header class="quiz-head">
+      <div class="quiz-meta">
+        <span id="quizPhase" class="phase">普通题</span>
+        <span id="quizCount">1 / 10</span>
+      </div>
+      <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+    </header>
+
+    <div class="card qcard">
+      <div class="qbadge"><span id="qBadge">Q1</span><span id="qTag" class="q-tag"></span></div>
+      <h2 id="qText" class="qtext">题目加载中…</h2>
+      <p id="qHint" class="qhint"></p>
+      <div id="options" class="options"></div>
+    </div>
+
+    <div class="footer-bar">
+      <button id="nextBtn" class="btn primary" disabled>下一题</button>
+    </div>
+  </section>
+
+  <!-- ============ 解锁页 ============ -->
+  <section class="screen" id="screen-unlock">
+    <div class="card unlock-card">
+      <div class="unlock-emoji">🎉</div>
+      <h2>恭喜你，非常了解我！</h2>
+      <p>普通题答对 <b id="unlockScore">8</b> / 10 道<br />已解锁隐藏附加题：5 道，每题 2 分</p>
+      <button id="bonusBtn" class="btn primary">进入附加题</button>
+    </div>
+    <p class="start-tip">附加题答完，就能看到完整的星系排行榜。</p>
+  </section>
+
+  <!-- ============ 结果页 ============ -->
+  <section class="screen" id="screen-result">
+    <p class="result-eyebrow">你的默契分</p>
+    <div class="score-big"><span id="finalScore">0</span><span class="score-max">/ 20</span></div>
+
+    <div class="card breakdown">
+      <div class="bd-row"><span>普通题</span><b id="bdMain">0 / 10</b></div>
+      <div class="bd-row"><span>隐藏题</span><b id="bdBonus">0 / 10</b></div>
+      <div class="bd-row total"><span>总得分</span><b id="bdTotal">0 分</b></div>
+    </div>
+
+    <div class="card result-msg">
+      <h3 id="rankTitle">来日方长</h3>
+      <p id="rankDesc">下次多聊聊天吧，我会更好懂一点的。</p>
+    </div>
+
+    <button id="toGalaxyBtn" class="btn primary">进入星系排行榜</button>
+    <button id="reviewBtn" class="btn ghost">查看答题回顾</button>
+  </section>
+
+  <!-- ============ 星系页 ============ -->
+  <section class="screen screen-wide" id="screen-galaxy">
+    <header class="galaxy-head">
+      <div>
+        <h2>HXQ 的星系</h2>
+        <p id="galaxySub">离恒星越近，默契值越高</p>
+      </div>
+      <button id="refreshBtn" class="icon-btn" title="刷新排行榜" aria-label="刷新排行榜">⟳</button>
+    </header>
+
+    <div id="syncBanner" class="sync-banner" hidden>
+      <span id="syncBannerText">排行榜同步失败</span>
+      <button id="retrySyncBtn">重试</button>
+    </div>
+
+    <div class="galaxy-card" id="galaxyCard">
+      <canvas id="galaxyCanvas"></canvas>
+      <div id="planetTip" class="planet-tip" hidden></div>
+    </div>
+
+    <div class="card rank-card">
+      <div class="rank-head"><span>排行榜</span><span id="rankCount">0 人</span></div>
+      <div id="rankList" class="rank-list"></div>
+    </div>
+
+    <div class="galaxy-actions">
+      <button id="copyBtn" class="btn primary">复制挑战链接</button>
+    </div>
+    <p class="galaxy-note">排行榜实时同步 · 把链接发给朋友，看看谁离 HXQ 最近</p>
+  </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+
+<!-- ============ 答题回顾 ============ -->
+<div id="reviewModal" class="modal" hidden>
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h3>答题回顾</h3>
+      <button id="closeReview" class="icon-btn" aria-label="关闭">✕</button>
+    </div>
+    <div id="reviewList" class="review-list"></div>
+  </div>
+</div>
+
+<pre id="selftest" hidden></pre>
+
+<script>/* ============================================================
+ *  HXQ 的星系 · 默契挑战  —  题库数据
+ *  普通题 10 道（每题 1 分），附加题 5 道（每题 2 分）
+ *  ans 为正确选项下标数组（0=A 1=B 2=C 3=D）
+ * ============================================================ */
+const GAME_DATA = {
+  starName: 'HXQ',
+  title: 'HXQ 的星系',
+  subtitle: '默契挑战',
+  maxNameChars: 5,
+  unlockMainScore: 8,      // 普通题答对 ≥8 道解锁附加题
+  mainPointsPerQuestion: 1,
+  bonusPointsPerQuestion: 2,
+
+  main: [
+    {
+      id: 'm1',
+      q: '我对以下哪种食物最喜欢？',
+      opts: ['番茄', '土豆', '西瓜', '草莓'],
+      ans: [1]
+    },
+    {
+      id: 'm2',
+      q: '我对于学习的态度是——',
+      opts: [
+        '非常热爱，所以很爱学习',
+        '不咋喜欢，但是很努力在学',
+        '不咋喜欢，基本摆烂',
+        '不咋喜欢，非常厌恶'
+      ],
+      ans: [1]
+    },
+    {
+      id: 'm3',
+      q: '你觉得我的梦中情屋可能是——',
+      opts: ['超级大别墅', '豪华大平层', '移动小房车', '温馨小树屋'],
+      ans: [1]
+    },
+    {
+      id: 'm4',
+      q: '你觉得我在不开心的时候，敢于跟最好的朋友们倾诉吗？',
+      opts: [
+        '敢跟部分好友倾诉一些部分不开心的事情',
+        '敢跟所有好友倾诉全部不开心的事情',
+        '只敢跟一两个好友倾诉一些无伤大雅的不开心的事情',
+        '不敢跟任何好友倾诉任何不开心的事情'
+      ],
+      ans: [2]
+    },
+    {
+      id: 'm5',
+      q: '你觉得我的真实性格可能是——',
+      multi: true,
+      hint: '多选：选出全部符合的选项，多选或漏选都算错',
+      opts: ['开朗阳光', '内向敏感', '可爱粘人', '独立自主'],
+      ans: [1, 3]
+    },
+    {
+      id: 'm6',
+      q: '以下哪种行为我可能最讨厌呢？',
+      opts: [
+        '打电话时突然挂掉，不解释原因',
+        '发消息明明看到了，就是死活不回',
+        '在我认真询问某个事情的时候，仍然给出玩笑的答复',
+        '在我认真诉说某件事情的时候，仍不相信我的说辞'
+      ],
+      ans: [3]
+    },
+    {
+      id: 'm7',
+      q: '我睡觉的时候，床上会有多少件包括被子、枕头、抱枕在内的床上用品呢？',
+      opts: ['1~2 个', '3~4 个', '5~6 个', '7 个及以上'],
+      ans: [2]
+    },
+    {
+      id: 'm8',
+      q: '以下哪个物品我最有可能忘记带？',
+      opts: ['家门口的钥匙', '老师要填的各种宣传单', '政治作业', '充电宝'],
+      ans: [2]
+    },
+    {
+      id: 'm9',
+      q: '以下哪种食物我认为是彻彻底底的垃圾食品？',
+      opts: ['辣条', '汉堡包', '汽水', '以上全是'],
+      ans: [3]
+    },
+    {
+      id: 'm10',
+      q: '你认为我——',
+      opts: [
+        '有明确的目标',
+        '十分迷茫，无所适从',
+        '没有目标，但是仍在努力',
+        '没有目标，随便摆烂'
+      ],
+      ans: [2]
+    }
+  ],
+
+  bonus: [
+    {
+      id: 'b1',
+      q: '你觉得我最有可能喜欢哪种车？',
+      opts: [
+        '粉粉嫩嫩的燃油汽车',
+        '帅气的超跑',
+        '有着智能系统的新能源',
+        '复古古典的精致轿车'
+      ],
+      ans: [2]
+    },
+    {
+      id: 'b2',
+      q: '想买衣服的时候，我最有可能——',
+      opts: [
+        '跟家人去商场逛',
+        '自己上网搜索',
+        '让家人随便买点有图样的衣服',
+        '让家人随便买点纯色衣服'
+      ],
+      ans: [3]
+    },
+    {
+      id: 'b3',
+      q: '你认为我容易相信别人吗？',
+      opts: [
+        '非常容易相信别人',
+        '非常不容易相信别人',
+        '偶尔非常，偶尔不信',
+        '表面相信，实则不信'
+      ],
+      ans: [2]
+    },
+    {
+      id: 'b4',
+      q: '我不想骑单车去上学是因为——',
+      opts: [
+        '路上好多车太危险了',
+        '这样子就不能在路上吃早餐了',
+        '我不喜欢骑单车这种运动',
+        '因为我懒'
+      ],
+      ans: [3]
+    },
+    {
+      id: 'b5',
+      q: '综合计算题（压轴）：设 S 为用 4 种颜色给正六面体（立方体）的 6 个面染色的方案数（若两种染色能通过旋转立方体重合，则视为同一种）；又设 I = ∫₀¹ x⁴(1−x)³ dx。求 S + 1/I 的值。',
+      hint: '大学难度 · 纯计算，不看过程只看结果',
+      opts: [
+        '−1 + √3·i',
+        '520',
+        'f(x) = e^(x²)·sin x + ln(1+x)',
+        '+∞（正无穷大）'
+      ],
+      ans: [1]
+    }
+  ],
+
+  /* 结果页评语：按总分（0~20）匹配 */
+  ranks: [
+    { min: 20, title: '你就是我本人吧', desc: '满分默契，连我自己都没这么懂我。' },
+    { min: 18, title: '默契值爆表', desc: '你几乎读懂了我的每一个小心思。' },
+    { min: 15, title: '非常了解我', desc: '恭喜你，成功通过了这份默契证书。' },
+    { min: 12, title: '有点东西', desc: '再多聊两句，你就能离我更近一点。' },
+    { min: 8, title: '普通默契', desc: '还不错，至少你抓住了我的大方向。' },
+    { min: 4, title: '还在探索', desc: '别急，我们还有很多故事可以慢慢讲。' },
+    { min: 0, title: '来日方长', desc: '下次多聊聊天吧，我会更好懂一点的。' }
+  ]
+};
+</script>
+<script>/* ============================================================
+ *  HXQ 的星系 · 默契挑战  —  交互逻辑
+ *  单文件 H5：无外部依赖；排行榜通过公共消息通道同步（零注册）
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  var D = GAME_DATA;
+
+  var CONFIG = {
+    ntfyBase: 'https://ntfy.sh',
+    /* 公共同步主题：随机串，越随机越私密；换主题 = 换一个新排行榜 */
+    ntfyTopic: 'hxq-galaxy-4k9q2m7z',
+    pollMs: 8000,
+    requestTimeout: 9000,
+    storage: {
+      result: 'hxq_result_v1',
+      board: 'hxq_board_v1',
+      name: 'hxq_name_v1'
+    }
+  };
+
+  /* ---------------- 状态 ---------------- */
+  var S = {
+    screen: 'start',
+    name: '',
+    phase: 'main',
+    qi: 0,
+    mainAns: [],
+    bonusAns: [],
+    mainScore: 0,
+    bonusCorrect: 0,
+    bonusScore: 0,
+    total: 0,
+    unlocked: false,
+    result: null,
+    board: [],
+    selected: null,
+    syncStatus: 'idle',
+    demo: false,
+    selftest: false
+  };
+
+  var selection = [];
+  var composing = false;
+  var toastTimer = 0;
+  var pollTimer = 0;
+  var published = false;
+
+  var $ = function (sel, root) {
+    return (root || document).querySelector(sel);
+  };
+  var $$ = function (sel, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  };
+
+  /* ---------------- 小工具 ---------------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function hashStr(s) {
+    var h = 2166136261;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function clampName(raw) {
+    var s = String(raw == null ? '' : raw).replace(/[\u0000-\u001f\u007f]/g, '');
+    s = s.replace(/\s+/g, ' ').trim();
+    return Array.from(s).slice(0, D.maxNameChars).join('');
+  }
+
+  function countChars(s) {
+    return Array.from(String(s || '')).length;
+  }
+
+  function toast(msg, ms) {
+    var t = $('#toast');
+    if (!t) return;
+    t.hidden = false;
+    t.textContent = msg;
+    requestAnimationFrame(function () {
+      t.classList.add('show');
+    });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () {
+        t.hidden = true;
+      }, 260);
+    }, ms || 2400);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', 'readonly');
+        ta.style.position = 'fixed';
+        ta.style.top = '-999px';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? resolve() : reject(new Error('execCommand copy failed'));
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /* ---------------- 判分 ---------------- */
+  function judge(q, sel) {
+    if (!q || !sel || !sel.length) return false;
+    var a = q.ans.slice().sort(function (x, y) {
+      return x - y;
+    });
+    var s = sel.slice().sort(function (x, y) {
+      return x - y;
+    });
+    if (a.length !== s.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] !== s[i]) return false;
+    }
+    return true;
+  }
+
+  function countCorrect(list, answers) {
+    var n = 0;
+    for (var i = 0; i < list.length; i++) {
+      if (judge(list[i], answers[i] || [])) n++;
+    }
+    return n;
+  }
+
+  function currentList() {
+    return S.phase === 'main' ? D.main : D.bonus;
+  }
+
+  /* ---------------- 本地存储 ---------------- */
+  function lsSet(key, val) {
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {
+      /* 隐私模式等 */
+    }
+  }
+
+  function lsGet(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveResult() {
+    lsSet(CONFIG.storage.result, S.result);
+    lsSet(CONFIG.storage.name, S.name);
+  }
+
+  function saveBoardCache() {
+    if (S.demo || S.selftest) return;
+    lsSet(
+      CONFIG.storage.board,
+      S.board.map(function (p) {
+        return { v: 1, n: p.n, m: p.m, b: p.b, s: p.s, t: p.t || 0 };
+      })
+    );
+  }
+
+  /* ---------------- 背景星空 ---------------- */
+  var BG = { canvas: null, ctx: null, stars: [], dpr: 1, raf: 0, last: 0 };
+
+  function initBgStars() {
+    BG.canvas = $('#bgStars');
+    if (!BG.canvas || !BG.canvas.getContext) return;
+    BG.ctx = BG.canvas.getContext('2d');
+    resizeBg();
+    BG.stars = [];
+    for (var i = 0; i < 90; i++) {
+      BG.stars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: Math.random() * 1.35 + 0.35,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.25 + Math.random() * 0.6,
+        hue: Math.random() < 0.2 ? 40 : 220
+      });
+    }
+    window.addEventListener('resize', resizeBg);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      drawBg(0);
+      return;
+    }
+    var loop = function (ts) {
+      if (ts - BG.last > 55) {
+        BG.last = ts;
+        drawBg(ts / 1000);
+      }
+      BG.raf = requestAnimationFrame(loop);
+    };
+    BG.raf = requestAnimationFrame(loop);
+  }
+
+  function resizeBg() {
+    if (!BG.canvas) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    BG.dpr = dpr;
+    BG.canvas.width = Math.round(window.innerWidth * dpr);
+    BG.canvas.height = Math.round(window.innerHeight * dpr);
+    BG.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawBg(t) {
+    if (!BG.ctx) return;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    BG.ctx.clearRect(0, 0, w, h);
+    for (var i = 0; i < BG.stars.length; i++) {
+      var s = BG.stars[i];
+      var a = 0.18 + 0.55 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+      BG.ctx.beginPath();
+      BG.ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+      BG.ctx.fillStyle = s.hue === 40 ? 'rgba(255,226,170,' + a + ')' : 'rgba(210,220,255,' + a + ')';
+      BG.ctx.fill();
+    }
+  }
+
+  /* ---------------- 页面切换 ---------------- */
+  function showScreen(name) {
+    $$('.screen').forEach(function (el) {
+      el.classList.remove('active');
+    });
+    var el = $('#screen-' + name);
+    if (el) el.classList.add('active');
+    S.screen = name;
+    try {
+      window.scrollTo(0, 0);
+    } catch (e) {}
+    hidePlanetTip();
+    if (name === 'galaxy') {
+      GXApi.stop();
+      setTimeout(onGalaxyShow, 40);
+    } else {
+      stopPolling();
+      GXApi.stop();
+    }
+  }
+
+  /* ---------------- 开始页 ---------------- */
+  function updateNameUI() {
+    var input = $('#nickname');
+    var v = input.value;
+    var n = countChars(v);
+    $('#nameCount').textContent = n + '/' + D.maxNameChars;
+    $('#startBtn').disabled = clampName(v).length === 0;
+  }
+
+  function applyNameClamp() {
+    var input = $('#nickname');
+    var clamped = clampName(input.value);
+    if (input.value !== clamped) input.value = clamped;
+  }
+
+  function restoreLocal() {
+    var name = lsGet(CONFIG.storage.name);
+    if (typeof name === 'string' && name) {
+      $('#nickname').value = clampName(name);
+    }
+    var result = lsGet(CONFIG.storage.result);
+    if (result && result.name && typeof result.total === 'number') {
+      S.result = result;
+      renderContinue(result);
+    }
+    var board = lsGet(CONFIG.storage.board);
+    if (Array.isArray(board)) {
+      S.board = board
+        .map(normalizeEntry)
+        .filter(Boolean)
+        .sort(function (a, b) {
+          return b.s - a.s;
+        });
+    }
+    updateNameUI();
+  }
+
+  function renderContinue(result) {
+    var box = $('#continueBox');
+    if (!box) return;
+    var rank = rankOf(result.total);
+    box.innerHTML =
+      '<div class="card">' +
+      '<div class="c-info">' +
+      '<div class="c-title">上次成绩 · ' + esc(result.name) + ' · ' + esc(rank.title) + '</div>' +
+      '<div class="c-score">' + result.total + ' <span style="font-size:12px;color:#a9a2c9;font-weight:600">/ 20 分</span></div>' +
+      '</div>' +
+      '<div class="c-actions">' +
+      '<button class="mini-btn" id="viewOldBtn">看排行</button>' +
+      '<button class="mini-btn gold" id="restartBtn">再玩一次</button>' +
+      '</div>' +
+      '</div>';
+    $('#viewOldBtn').addEventListener('click', function () {
+      loadResultIntoState(result);
+      renderGalaxyFromState();
+      showScreen('galaxy');
+    });
+    $('#restartBtn').addEventListener('click', function () {
+      $('#nickname').value = clampName(result.name || '');
+      updateNameUI();
+      try {
+        localStorage.removeItem(CONFIG.storage.result);
+      } catch (e) {}
+      S.result = null;
+      $('#continueBox').innerHTML = '';
+      $('#nickname').focus();
+    });
+  }
+
+  function loadResultIntoState(result) {
+    S.name = result.name;
+    S.mainScore = result.main;
+    S.bonusScore = result.bonus;
+    S.total = result.total;
+    S.unlocked = result.unlocked != null ? !!result.unlocked : !!(result.bonus || 0) || !!((result.answers && result.answers.bonus && result.answers.bonus.length));
+    S.mainAns = (result.answers && result.answers.main) || [];
+    S.bonusAns = (result.answers && result.answers.bonus) || [];
+    S.result = result;
+  }
+
+  /* ---------------- 答题 ---------------- */
+  function startGame() {
+    var name = clampName($('#nickname').value);
+    if (!name) {
+      toast('先输入你的昵称吧');
+      return;
+    }
+    S.name = name;
+    S.phase = 'main';
+    S.qi = 0;
+    S.mainAns = [];
+    S.bonusAns = [];
+    S.mainScore = 0;
+    S.bonusScore = 0;
+    S.total = 0;
+    S.unlocked = false;
+    S.result = null;
+    selection = [];
+    published = false;
+    try {
+      lsSet(CONFIG.storage.name, name);
+      localStorage.removeItem(CONFIG.storage.result);
+    } catch (e) {}
+    $('#continueBox').innerHTML = '';
+    renderQuestion();
+    showScreen('quiz');
+  }
+
+  function renderQuestion() {
+    var list = currentList();
+    var q = list[S.qi];
+    if (!q) return;
+    var isMain = S.phase === 'main';
+    selection = [];
+
+    $('#quizPhase').textContent = isMain ? '普通题' : '隐藏题';
+    $('#quizPhase').className = 'phase' + (isMain ? '' : ' bonus');
+    $('#quizCount').textContent = S.qi + 1 + ' / ' + list.length;
+    $('#progressFill').style.width = (S.qi / list.length) * 100 + '%';
+
+    $('#qBadge').textContent = (isMain ? 'Q' : 'B') + (S.qi + 1);
+    $('#qTag').textContent = isMain ? '每题 1 分' : '每题 2 分';
+    $('#qText').textContent = q.q;
+    $('#qHint').textContent = q.multi
+      ? q.hint || '多选：选出全部符合的选项'
+      : isMain
+      ? '选一个最像我的答案'
+      : '附加题 · 每题 2 分';
+
+    var wrap = $('#options');
+    wrap.innerHTML = '';
+    q.opts.forEach(function (text, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt';
+      b.setAttribute('data-i', i);
+      var key = document.createElement('span');
+      key.className = 'opt-key';
+      key.textContent = 'ABCD'.charAt(i);
+      var txt = document.createElement('span');
+      txt.className = 'opt-text';
+      txt.textContent = text;
+      var chk = document.createElement('span');
+      chk.className = 'opt-check';
+      b.appendChild(key);
+      b.appendChild(txt);
+      b.appendChild(chk);
+      b.addEventListener('click', function () {
+        onPick(i, q.multi);
+      });
+      wrap.appendChild(b);
+    });
+
+    var nextBtn = $('#nextBtn');
+    nextBtn.disabled = true;
+    nextBtn.textContent = S.qi === list.length - 1 ? (isMain ? '提交答案' : '完成挑战') : '下一题';
+  }
+
+  function onPick(i, multi) {
+    if (multi) {
+      var pos = selection.indexOf(i);
+      if (pos >= 0) selection.splice(pos, 1);
+      else selection.push(i);
+    } else {
+      selection = [i];
+    }
+    $$('#options .opt').forEach(function (el) {
+      var idx = +el.getAttribute('data-i');
+      el.classList.toggle('selected', selection.indexOf(idx) >= 0);
+    });
+    $('#nextBtn').disabled = selection.length === 0;
+  }
+
+  function confirmAnswer() {
+    if (!selection.length) {
+      toast('先选一个答案吧');
+      return;
+    }
+    var answers = selection.slice().sort(function (a, b) {
+      return a - b;
+    });
+    if (S.phase === 'main') S.mainAns[S.qi] = answers;
+    else S.bonusAns[S.qi] = answers;
+
+    var list = currentList();
+    if (S.qi < list.length - 1) {
+      S.qi++;
+      renderQuestion();
+      return;
+    }
+
+    /* 本阶段答完 */
+    if (S.phase === 'main') {
+      S.mainScore = countCorrect(D.main, S.mainAns);
+      if (S.mainScore >= D.unlockMainScore) {
+        S.unlocked = true;
+        $('#unlockScore').textContent = S.mainScore;
+        showScreen('unlock');
+        confetti(26);
+      } else {
+        finishAll();
+      }
+    } else {
+      finishAll();
+    }
+  }
+
+  /* ---------------- 结算 ---------------- */
+  function finishAll() {
+    S.mainScore = countCorrect(D.main, S.mainAns);
+    S.unlocked = S.mainScore >= D.unlockMainScore;
+    S.bonusCorrect = S.unlocked ? countCorrect(D.bonus, S.bonusAns) : 0;
+    S.bonusScore = S.bonusCorrect * D.bonusPointsPerQuestion;
+    S.total = S.mainScore + S.bonusScore;
+
+    S.result = {
+      name: S.name,
+      main: S.mainScore,
+      bonus: S.bonusScore,
+      bonusCorrect: S.bonusCorrect,
+      total: S.total,
+      unlocked: S.unlocked,
+      answers: {
+        main: S.mainAns.slice(),
+        bonus: S.bonusAns.slice()
+      },
+      ts: Date.now()
+    };
+    saveResult();
+    renderResult();
+    showScreen('result');
+    if (S.total >= 15) confetti(34);
+    if (!S.demo && !S.selftest) publishOwn();
+  }
+
+  function rankOf(total) {
+    for (var i = 0; i < D.ranks.length; i++) {
+      if (total >= D.ranks[i].min) return D.ranks[i];
+    }
+    return D.ranks[D.ranks.length - 1];
+  }
+
+  function renderResult() {
+    var r = S.result || { total: S.total, main: S.mainScore, bonus: S.bonusScore, bonusCorrect: S.bonusCorrect };
+    var rank = rankOf(r.total);
+    $('#finalScore').textContent = r.total;
+    $('#bdMain').textContent = r.main + ' / 10';
+    $('#bdBonus').textContent = S.unlocked
+      ? r.bonusCorrect + ' / 5（' + r.bonus + ' 分）'
+      : '未解锁';
+    $('#bdTotal').textContent = r.total + ' 分';
+    $('#rankTitle').textContent = rank.title;
+    $('#rankDesc').textContent = rank.desc;
+  }
+
+  /* ---------------- 答题回顾 ---------------- */
+  function answerTexts(q, sel) {
+    if (!sel || !sel.length) return '未作答';
+    return sel
+      .slice()
+      .sort(function (a, b) {
+        return a - b;
+      })
+      .map(function (i) {
+        return 'ABCD'.charAt(i) + '·' + q.opts[i];
+      })
+      .join('　');
+  }
+
+  function openReview() {
+    var list = $('#reviewList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    function addBlock(title, qs, ansArr, unlocked) {
+      var h = document.createElement('div');
+      h.className = 'review-head';
+      h.textContent = title;
+      list.appendChild(h);
+      if (!unlocked) {
+        var lock = document.createElement('div');
+        lock.className = 'review-item';
+        lock.textContent = '没有解锁隐藏题（普通题需答对 8 道以上）';
+        lock.style.color = '#7d769e';
+        lock.style.fontSize = '12.5px';
+        list.appendChild(lock);
+        return;
+      }
+      qs.forEach(function (q, i) {
+        var sel = ansArr[i] || [];
+        var ok = judge(q, sel);
+        var item = document.createElement('div');
+        item.className = 'review-item';
+        item.innerHTML =
+          '<div class="review-top">' +
+          '<span class="idx">' + (q.id.charAt(0) === 'b' ? '隐' : '普') + (i + 1) + '</span>' +
+          '<span class="qi">' + esc(q.q) + '</span>' +
+          '<span class="review-result ' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓ 对' : '✗ 错') + '</span>' +
+          '</div>' +
+          '<div class="review-detail">你的选择：' + esc(answerTexts(q, sel)) + '<br>正确答案：<span class="correct">' + esc(answerTexts(q, q.ans)) + '</span></div>';
+        list.appendChild(item);
+      });
+    }
+
+    addBlock('普通题 · 10 道', D.main, S.mainAns, true);
+    addBlock('隐藏附加题 · 5 道', D.bonus, S.bonusAns, S.unlocked);
+
+    $('#reviewModal').hidden = false;
+  }
+
+  function closeReview() {
+    $('#reviewModal').hidden = true;
+  }
+
+  /* ---------------- 同步（ntfy 公共通道） ---------------- */
+  function withTimeout(promise, ms) {
+    return new Promise(function (resolve, reject) {
+      var done = false;
+      var timer = setTimeout(function () {
+        if (done) return;
+        done = true;
+        reject(new Error('timeout'));
+      }, ms);
+      promise.then(
+        function (v) {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          resolve(v);
+        },
+        function (e) {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          reject(e);
+        }
+      );
+    });
+  }
+
+  function httpGetText(url) {
+    if (window.fetch) {
+      return fetch(url, { cache: 'no-store' }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      });
+    }
+    return new Promise(function (resolve, reject) {
+      var x = new XMLHttpRequest();
+      x.open('GET', url, true);
+      x.timeout = CONFIG.requestTimeout;
+      x.onload = function () {
+        if (x.status >= 200 && x.status < 300) resolve(x.responseText);
+        else reject(new Error('HTTP ' + x.status));
+      };
+      x.onerror = function () {
+        reject(new Error('network'));
+      };
+      x.ontimeout = function () {
+        reject(new Error('timeout'));
+      };
+      x.send();
+    });
+  }
+
+  function httpPostText(url, body) {
+    if (window.fetch) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: body
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+    }
+    return new Promise(function (resolve, reject) {
+      var x = new XMLHttpRequest();
+      x.open('POST', url, true);
+      x.timeout = CONFIG.requestTimeout;
+      x.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8');
+      x.onload = function () {
+        if (x.status >= 200 && x.status < 300) {
+          try {
+            resolve(JSON.parse(x.responseText));
+          } catch (e) {
+            resolve({});
+          }
+        } else reject(new Error('HTTP ' + x.status));
+      };
+      x.onerror = function () {
+        reject(new Error('network'));
+      };
+      x.ontimeout = function () {
+        reject(new Error('timeout'));
+      };
+      x.send(body);
+    });
+  }
+
+  function normalizeEntry(e) {
+    if (!e || typeof e !== 'object') return null;
+    if (typeof e.n !== 'string') return null;
+    var n = e.n.replace(/\s+/g, ' ').trim();
+    if (!n) return null;
+    if (countChars(n) > 10) n = Array.from(n).slice(0, 10).join('');
+    var m = Math.round(Number(e.m));
+    var b = Math.round(Number(e.b));
+    if (!isFinite(m) || !isFinite(b)) return null;
+    m = Math.max(0, Math.min(10, m));
+    b = Math.max(0, Math.min(10, Math.round(b / 2) * 2));
+    var s = m + b;
+    return { v: 1, n: n, m: m, b: b, s: s, t: 0 };
+  }
+
+  function parseNtfyStream(text) {
+    var out = [];
+    String(text || '')
+      .split('\n')
+      .forEach(function (line) {
+        line = line.trim();
+        if (!line) return;
+        var obj;
+        try {
+          obj = JSON.parse(line);
+        } catch (e) {
+          return;
+        }
+        if (!obj || obj.event !== 'message' || typeof obj.message !== 'string') return;
+        var raw;
+        try {
+          raw = JSON.parse(obj.message);
+        } catch (e2) {
+          return;
+        }
+        var e = normalizeEntry(raw);
+        if (!e) return;
+        e.t = (Number(obj.time) || 0) * 1000;
+        out.push(e);
+      });
+    return out;
+  }
+
+  function entryFromResult(r) {
+    return { v: 1, n: r.name, m: r.main, b: r.bonus, s: r.total };
+  }
+
+  var publishing = false;
+
+  function publishOwn() {
+    if (!S.result || S.demo || S.selftest) return Promise.resolve(false);
+    if (publishing) return Promise.resolve(false);
+    publishing = true;
+    var payload = JSON.stringify(entryFromResult(S.result));
+    setSync('syncing');
+    return withTimeout(httpPostText(CONFIG.ntfyBase + '/' + CONFIG.ntfyTopic, payload), CONFIG.requestTimeout)
+      .then(function (msg) {
+        var t = msg && msg.time ? Number(msg.time) * 1000 : Date.now();
+        var e = normalizeEntry(JSON.parse(payload));
+        e.t = t;
+        mergeBoard([e]);
+        published = true;
+        setSync('ok');
+        renderIfGalaxy();
+        return true;
+      })
+      .catch(function () {
+        published = false;
+        setSync('fail');
+        return false;
+      })
+      .then(function (v) {
+        publishing = false;
+        return v;
+      });
+  }
+
+  function pullBoard() {
+    if (S.demo || S.selftest) return Promise.resolve();
+    var url =
+      CONFIG.ntfyBase + '/' + CONFIG.ntfyTopic + '/json?poll=1&since=all&ts=' + Date.now();
+    return withTimeout(httpGetText(url), CONFIG.requestTimeout)
+      .then(function (text) {
+        mergeBoard(parseNtfyStream(text));
+        setSync('ok');
+        renderIfGalaxy();
+      })
+      .catch(function () {
+        setSync('fail');
+        renderIfGalaxy();
+      });
+  }
+
+  function mergeBoard(entries) {
+    var map = {};
+    S.board.forEach(function (e) {
+      map[e.n] = e;
+    });
+    (entries || []).forEach(function (e) {
+      var old = map[e.n];
+      if (!old || (e.t || 0) >= (old.t || 0)) map[e.n] = e;
+    });
+    if (S.result && S.result.name) {
+      var own = map[S.result.name] || {};
+      map[S.result.name] = {
+        v: 1,
+        n: S.result.name,
+        m: S.result.main,
+        b: S.result.bonus,
+        s: S.result.total,
+        t: own.t || Date.now(),
+        self: true
+      };
+    }
+    S.board = Object.keys(map)
+      .map(function (k) {
+        return map[k];
+      })
+      .sort(function (a, b) {
+        return b.s - a.s || (a.t || 0) - (b.t || 0);
+      });
+    saveBoardCache();
+  }
+
+  function startPolling() {
+    stopPolling();
+    if (S.demo || S.selftest) return;
+    pullBoard();
+    pollTimer = setInterval(pullBoard, CONFIG.pollMs);
+  }
+
+  function stopPolling() {
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = 0;
+    }
+  }
+
+  function setSync(status) {
+    S.syncStatus = status;
+    var banner = $('#syncBanner');
+    if (!banner) return;
+    if (status === 'fail') {
+      banner.hidden = false;
+      $('#syncBannerText').textContent = '排行榜同步失败，当前显示本机记录';
+    } else {
+      banner.hidden = true;
+    }
+  }
+
+  function ensureSelfInBoard() {
+    if (!S.result || !S.result.name) return;
+    mergeBoard([]);
+  }
+
+  /* ---------------- 星系排行榜 ---------------- */
+  function renderIfGalaxy() {
+    if (S.screen === 'galaxy') renderGalaxy();
+  }
+
+  function renderGalaxy() {
+    var players = S.board.slice();
+    var count = players.length;
+    $('#galaxySub').textContent =
+      count > 1 ? '共 ' + count + ' 颗星球 · 离中心越近分数越高' : '离恒星越近，默契值越高';
+    $('#rankCount').textContent = count + ' 人';
+
+    var list = $('#rankList');
+    list.innerHTML = '';
+    if (!players.length) {
+      list.innerHTML = '<div class="rank-empty">还没有人答完题<br>把链接发给朋友，等第一颗星球亮起来</div>';
+    } else {
+      players.forEach(function (p, i) {
+        var row = document.createElement('div');
+        row.className = 'rank-row' + (p.self ? ' self' : '');
+        row.innerHTML =
+          '<span class="rank-no">' + (i + 1) + '</span>' +
+          '<span class="rank-name">' + esc(p.n) + (p.self ? '<span class="you">你</span>' : '') + '</span>' +
+          '<span class="rank-detail">' + p.m + ' + ' + p.b + '</span>' +
+          '<span class="rank-score">' + p.s + '</span>';
+        list.appendChild(row);
+      });
+    }
+    GXApi.setPlayers(players);
+  }
+
+  function renderGalaxyFromState() {
+    ensureSelfInBoard();
+    renderGalaxy();
+  }
+
+  function onGalaxyShow() {
+    ensureSelfInBoard();
+    renderGalaxy();
+    GXApi.resize();
+    GXApi.start();
+    if (S.demo || S.selftest) return;
+    startPolling();
+    if (S.result && !published) publishOwn();
+  }
+
+  /* ---------------- 星系画布 ---------------- */
+  var GX = {
+    canvas: null,
+    ctx: null,
+    dpr: 1,
+    w: 0,
+    h: 0,
+    players: [],
+    stars: [],
+    raf: 0,
+    running: false,
+    t0: 0,
+    selectedName: null,
+    reduce: false
+  };
+
+  function planetColor(name) {
+    var h = hashStr(name);
+    var hue = h % 360;
+    /* 避开与金色中心太接近的色相 */
+    if (hue > 35 && hue < 60) hue = (hue + 140) % 360;
+    return 'hsl(' + hue + ', 72%, 64%)';
+  }
+
+  function buildGalaxyStars() {
+    GX.stars = [];
+    for (var i = 0; i < 90; i++) {
+      GX.stars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: Math.random() * 1.2 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 0.7
+      });
+    }
+  }
+
+  function layoutGalaxyPlayers() {
+    var w = GX.w;
+    var h = GX.h;
+    if (!w || !h) return;
+    var cx = w / 2;
+    var cy = h / 2;
+    var R = Math.min(w, h);
+    var rIn = R * 0.24;
+    var rOut = R * 0.45;
+    var list = GX.players;
+    if (!list.length) return;
+    var scores = list.map(function (p) {
+      return p.s;
+    });
+    var maxS = Math.max.apply(null, scores);
+    var minS = Math.min.apply(null, scores);
+    var groups = {};
+    list.forEach(function (p) {
+      if (!groups[p.s]) groups[p.s] = [];
+      groups[p.s].push(p);
+    });
+    var keys = Object.keys(groups).sort(function (a, b) {
+      return b - a;
+    });
+    keys.forEach(function (k, gi) {
+      var score = +k;
+      var g = groups[k];
+      var r;
+      if (maxS === minS) r = (rIn + rOut) / 2;
+      else r = rIn + ((maxS - score) / Math.max(1, maxS - minS)) * (rOut - rIn);
+      g.forEach(function (p, i) {
+        p.r = r;
+        p.angle0 = gi * 0.7 + (i * Math.PI * 2) / Math.max(1, g.length) + (hashStr(p.n) % 100) / 100 * 0.4;
+        p.size = 5.6 + (p.s / 20) * 3.6 + (p.self ? 1.4 : 0);
+        p.color = p.self ? '#ffd166' : planetColor(p.n);
+      });
+    });
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  /* 预渲染：静态背景 + 行星/标签精灵，保证低端手机也能流畅转圈 */
+  function bakeGalaxy() {
+    var w = GX.w;
+    var h = GX.h;
+    var dpr = GX.dpr;
+    if (!w || !h) return;
+    var cx = w / 2;
+    var cy = h / 2;
+    var R = Math.min(w, h);
+    var starR = R * 0.068;
+    GX.starR = starR;
+
+    var cv = document.createElement('canvas');
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    var c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var bg = c.createRadialGradient(cx, cy * 0.85, 10, cx, cy, Math.max(w, h) * 0.78);
+    bg.addColorStop(0, '#171033');
+    bg.addColorStop(0.55, '#0b0720');
+    bg.addColorStop(1, '#05040e');
+    c.fillStyle = bg;
+    c.fillRect(0, 0, w, h);
+
+    var neb1 = c.createRadialGradient(w * 0.18, h * 0.16, 0, w * 0.18, h * 0.16, R * 0.6);
+    neb1.addColorStop(0, 'rgba(139,108,255,0.16)');
+    neb1.addColorStop(1, 'rgba(139,108,255,0)');
+    c.fillStyle = neb1;
+    c.fillRect(0, 0, w, h);
+    var neb2 = c.createRadialGradient(w * 0.86, h * 0.82, 0, w * 0.86, h * 0.82, R * 0.55);
+    neb2.addColorStop(0, 'rgba(255,138,201,0.10)');
+    neb2.addColorStop(1, 'rgba(255,138,201,0)');
+    c.fillStyle = neb2;
+    c.fillRect(0, 0, w, h);
+
+    for (var i = 0; i < GX.stars.length; i++) {
+      var st = GX.stars[i];
+      var a = 0.18 + 0.42 * (0.5 + 0.5 * Math.sin(st.phase));
+      c.beginPath();
+      c.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+      c.fillStyle = 'rgba(220,228,255,' + a + ')';
+      c.fill();
+    }
+
+    var seen = {};
+    GX.players.forEach(function (p) {
+      if (!p.r || seen[p.r]) return;
+      seen[p.r] = 1;
+      c.beginPath();
+      c.arc(cx, cy, p.r, 0, Math.PI * 2);
+      c.strokeStyle = 'rgba(255,255,255,0.065)';
+      c.lineWidth = 1;
+      c.setLineDash([3, 7]);
+      c.stroke();
+      c.setLineDash([]);
+    });
+
+    var glow = c.createRadialGradient(cx, cy, starR * 0.5, cx, cy, starR * 4.4);
+    glow.addColorStop(0, 'rgba(255,214,120,0.55)');
+    glow.addColorStop(0.35, 'rgba(255,170,60,0.16)');
+    glow.addColorStop(1, 'rgba(255,150,40,0)');
+    c.fillStyle = glow;
+    c.beginPath();
+    c.arc(cx, cy, starR * 4.4, 0, Math.PI * 2);
+    c.fill();
+
+    for (var k = 0; k < 6; k++) {
+      var ang = (Math.PI * 2 * k) / 6;
+      var len = starR * (2.6 + (k % 2 === 0 ? 1.1 : 0.4));
+      var ray = c.createLinearGradient(cx, cy, cx + Math.cos(ang) * len, cy + Math.sin(ang) * len);
+      ray.addColorStop(0, 'rgba(255,226,160,0.30)');
+      ray.addColorStop(1, 'rgba(255,226,160,0)');
+      c.beginPath();
+      c.moveTo(cx, cy);
+      c.lineTo(cx + Math.cos(ang) * len, cy + Math.sin(ang) * len);
+      c.strokeStyle = ray;
+      c.lineWidth = 2;
+      c.stroke();
+    }
+
+    var core = c.createRadialGradient(cx - starR * 0.3, cy - starR * 0.35, starR * 0.15, cx, cy, starR);
+    core.addColorStop(0, '#fffdf3');
+    core.addColorStop(0.45, '#ffe6a6');
+    core.addColorStop(1, '#ff9f2e');
+    c.beginPath();
+    c.arc(cx, cy, starR, 0, Math.PI * 2);
+    c.fillStyle = core;
+    c.fill();
+
+    c.font = '800 12.5px ' + FONT;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillStyle = '#ffe9b0';
+    c.fillText(D.starName, cx, cy + starR + 17);
+
+    GX.bgCanvas = cv;
+
+    GX.players.forEach(function (p) {
+      bakePlanetSprite(p);
+      bakeLabelSprite(p);
+    });
+  }
+
+  function bakePlanetSprite(p) {
+    var Rs = p.size * 2.9 + 3;
+    var dpr = GX.dpr;
+    var cv = document.createElement('canvas');
+    cv.width = Math.ceil(Rs * 2 * dpr);
+    cv.height = Math.ceil(Rs * 2 * dpr);
+    var c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.translate(Rs, Rs);
+
+    var halo = c.createRadialGradient(0, 0, p.size * 0.6, 0, 0, p.size * 2.6);
+    halo.addColorStop(0, 'rgba(255,255,255,0.12)');
+    halo.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = halo;
+    c.beginPath();
+    c.arc(0, 0, p.size * 2.6, 0, Math.PI * 2);
+    c.fill();
+
+    var body = c.createRadialGradient(-p.size * 0.35, -p.size * 0.4, p.size * 0.12, 0, 0, p.size);
+    body.addColorStop(0, 'rgba(255,255,255,0.92)');
+    body.addColorStop(0.35, p.color);
+    body.addColorStop(1, shade(p.color, -0.35));
+    c.beginPath();
+    c.arc(0, 0, p.size, 0, Math.PI * 2);
+    c.fillStyle = body;
+    c.fill();
+
+    if (p.self) {
+      c.beginPath();
+      c.arc(0, 0, p.size + 3.5, 0, Math.PI * 2);
+      c.strokeStyle = 'rgba(255,209,102,0.9)';
+      c.lineWidth = 1.6;
+      c.stroke();
+      c.beginPath();
+      c.arc(0, 0, p.size + 7.5, 0, Math.PI * 2);
+      c.strokeStyle = 'rgba(255,209,102,0.25)';
+      c.lineWidth = 1;
+      c.stroke();
+    }
+    p._sprite = cv;
+    p._spriteR = Rs;
+  }
+
+  function bakeLabelSprite(p) {
+    GX.ctx.font = labelFont(p);
+    var tw = GX.ctx.measureText(p.n).width;
+    var pw = Math.ceil(tw + 14);
+    var ph = 18;
+    var dpr = GX.dpr;
+    var cv = document.createElement('canvas');
+    cv.width = Math.ceil(pw * dpr);
+    cv.height = Math.ceil(ph * dpr);
+    var c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    roundRect(c, 0, 0, pw, ph, 7);
+    c.fillStyle = 'rgba(8,5,18,0.72)';
+    c.fill();
+    c.strokeStyle = p.self ? 'rgba(255,209,102,0.65)' : 'rgba(255,255,255,0.16)';
+    c.lineWidth = 1;
+    c.stroke();
+    c.font = labelFont(p);
+    c.fillStyle = p.self ? '#ffe9b0' : '#e8e4ff';
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+    c.fillText(p.n, pw / 2, ph / 2 + 0.5);
+    p._labelSprite = cv;
+    p._labelW = pw;
+    p._labelH = ph;
+  }
+
+  function drawPlanetLabelSprite(ctx, p) {
+    var lb = p._label;
+    if (!lb || !p._labelSprite) return;
+    ctx.drawImage(p._labelSprite, lb.lx - p._labelW / 2, lb.ly - p._labelH / 2, p._labelW, p._labelH);
+  }
+
+  function drawGalaxy(ts) {
+    var ctx = GX.ctx;
+    var w = GX.w;
+    var h = GX.h;
+    if (!ctx || !w || !h || !GX.bgCanvas) return;
+    var t = ((ts || 0) - GX.t0) / 1000;
+    var cx = w / 2;
+    var cy = h / 2;
+    var starR = GX.starR || Math.min(w, h) * 0.068;
+
+    ctx.drawImage(GX.bgCanvas, 0, 0, w, h);
+
+    /* 少量闪烁星，增加生气 */
+    for (var i = 0; i < GX.stars.length; i += 4) {
+      var st = GX.stars[i];
+      var a = 0.10 + 0.35 * (0.5 + 0.5 * Math.sin(t * st.speed + st.phase));
+      ctx.beginPath();
+      ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(220,228,255,' + a + ')';
+      ctx.fill();
+    }
+
+    var speed = GX.reduce ? 0 : 0.018;
+    var planets = GX.players;
+    for (var pi = 0; pi < planets.length; pi++) {
+      var p = planets[pi];
+      if (!p.r) continue;
+      var ang = p.angle0 + t * speed;
+      p._x = cx + Math.cos(ang) * p.r;
+      p._y = cy + Math.sin(ang) * p.r;
+    }
+
+    layoutPlanetLabels(ctx, w, h, cx, cy, starR);
+
+    for (var pj = 0; pj < planets.length; pj++) {
+      var pl = planets[pj];
+      if (!pl.r || !pl._sprite) continue;
+      ctx.drawImage(pl._sprite, pl._x - pl._spriteR, pl._y - pl._spriteR, pl._spriteR * 2, pl._spriteR * 2);
+    }
+
+    for (var pk = 0; pk < planets.length; pk++) {
+      drawPlanetLabelSprite(ctx, planets[pk]);
+    }
+
+    if (GX.selectedName) {
+      var selP = null;
+      for (var si = 0; si < planets.length; si++) {
+        if (planets[si].n === GX.selectedName) selP = planets[si];
+      }
+      if (selP) {
+        ctx.beginPath();
+        ctx.arc(selP._x, selP._y, selP.size + 11, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+    }
+  }
+
+
+  var FONT = '-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif';
+
+  function shade(hsl, delta) {
+    var m = /^hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)$/.exec(hsl);
+    if (!m) return hsl;
+    var l = Math.max(6, Math.min(92, +m[3] + delta * 100));
+    return 'hsl(' + m[1] + ',' + m[2] + '%,' + l.toFixed(1) + '%)';
+  }
+
+  function labelFont(p) {
+    var fs = GX.players.length > 12 ? 10.5 : 11;
+    return (p.self ? '700 ' : '500 ') + fs + 'px ' + FONT;
+  }
+
+  function labelRect(x, y, pw, ph) {
+    return { x: x - pw / 2 - 1.5, y: y - ph / 2 - 1.5, w: pw + 3, h: ph + 3 };
+  }
+
+  function rectsOverlap(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+
+  /* 给每个行星找一个不和别的标签/行星/恒星打架的位置（径向候选） */
+  function layoutPlanetLabels(ctx, w, h, cx, cy, starR) {
+    var placed = [];
+    var planets = GX.players;
+    var order = planets.slice().sort(function (a, b) {
+      return a.r - b.r;
+    });
+    var distSteps = [14, 27, 41];
+    var angleSteps = [0, 0.52, -0.52, 1.05, -1.05, 1.62, -1.62, 2.4, -2.4, Math.PI];
+    for (var oi = 0; oi < order.length; oi++) {
+      var p = order[oi];
+      if (!p.r) continue;
+      var pw = p._labelW || 48;
+      var ph = p._labelH || 18;
+      var base = Math.atan2(p._y - cy, p._x - cx);
+      var best = null;
+      for (var di = 0; di < distSteps.length && !best; di++) {
+        var dist = p.size + distSteps[di];
+        for (var ai = 0; ai < angleSteps.length; ai++) {
+          var ang = base + angleSteps[ai];
+          var lx = p._x + Math.cos(ang) * dist;
+          var ly = p._y + Math.sin(ang) * dist;
+          lx = Math.max(pw / 2 + 3, Math.min(w - pw / 2 - 3, lx));
+          ly = Math.max(ph / 2 + 3, Math.min(h - ph / 2 - 3, ly));
+          var rect = labelRect(lx, ly, pw, ph);
+          var ok = true;
+          for (var qi = 0; qi < planets.length; qi++) {
+            var q = planets[qi];
+            if (!q.r) continue;
+            var nx = Math.max(rect.x, Math.min(q._x, rect.x + rect.w));
+            var ny = Math.max(rect.y, Math.min(q._y, rect.y + rect.h));
+            var ddx = q._x - nx;
+            var ddy = q._y - ny;
+            var rr = (q.size + 2.5) * (q.size + 2.5);
+            if (ddx * ddx + ddy * ddy < rr) {
+              ok = false;
+              break;
+            }
+          }
+          if (!ok) continue;
+          var sx = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
+          var sy = Math.max(rect.y, Math.min(cy, rect.y + rect.h));
+          if ((sx - cx) * (sx - cx) + (sy - cy) * (sy - cy) < (starR + 8) * (starR + 8)) continue;
+          for (var ri = 0; ri < placed.length; ri++) {
+            if (rectsOverlap(rect, placed[ri])) {
+              ok = false;
+              break;
+            }
+          }
+          if (!ok) continue;
+          best = { lx: lx, ly: ly, pw: pw, ph: ph };
+          break;
+        }
+      }
+      if (!best) {
+        var lx2 = Math.max(pw / 2 + 3, Math.min(w - pw / 2 - 3, p._x + Math.cos(base) * (p.size + 15)));
+        var ly2 = Math.max(ph / 2 + 3, Math.min(h - ph / 2 - 3, p._y + Math.sin(base) * (p.size + 15)));
+        best = { lx: lx2, ly: ly2, pw: pw, ph: ph };
+      }
+      p._label = best;
+      placed.push(labelRect(best.lx, best.ly, best.pw, best.ph));
+    }
+  }
+
+  function drawPlanetLabel(ctx, p) {
+    drawPlanetLabelSprite(ctx, p);
+  }
+
+  var GXApi = {
+    setPlayers: function (list) {
+      GX.players = list.map(function (p) {
+        return {
+          v: p.v,
+          n: p.n,
+          m: p.m,
+          b: p.b,
+          s: p.s,
+          t: p.t,
+          self: !!p.self,
+          r: 0,
+          angle0: 0,
+          size: 6,
+          color: '#fff'
+        };
+      });
+      layoutGalaxyPlayers();
+      bakeGalaxy();
+      drawGalaxy(performance.now());
+    },
+    resize: function () {
+      if (!GX.canvas) return;
+      var rect = GX.canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      GX.dpr = dpr;
+      GX.canvas.width = Math.round(rect.width * dpr);
+      GX.canvas.height = Math.round(rect.height * dpr);
+      GX.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      GX.w = rect.width;
+      GX.h = rect.height;
+      layoutGalaxyPlayers();
+      bakeGalaxy();
+      drawGalaxy(performance.now());
+    },
+    start: function () {
+      if (!GX.ctx) return;
+      GXApi.stop();
+      GX.running = true;
+      GX.t0 = performance.now();
+      if (GX.reduce) {
+        drawGalaxy(performance.now());
+        return;
+      }
+      var loop = function (ts) {
+        if (!GX.running) return;
+        drawGalaxy(ts);
+        GX.raf = requestAnimationFrame(loop);
+      };
+      GX.raf = requestAnimationFrame(loop);
+    },
+    stop: function () {
+      GX.running = false;
+      if (GX.raf) cancelAnimationFrame(GX.raf);
+      GX.raf = 0;
+    }
+  };
+  window.GX = GXApi;
+
+  function hidePlanetTip() {
+    var tip = $('#planetTip');
+    if (tip) tip.hidden = true;
+    GX.selectedName = null;
+  }
+
+  function onGalaxyClick(e) {
+    if (!GX.players.length) return;
+    var rect = GX.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var found = null;
+    var best = 1e9;
+    for (var i = 0; i < GX.players.length; i++) {
+      var p = GX.players[i];
+      if (p._x == null) continue;
+      var d = Math.hypot(p._x - x, p._y - y);
+      if (d < 30 && d < best) {
+        best = d;
+        found = p;
+      }
+    }
+    var tip = $('#planetTip');
+    if (!found) {
+      hidePlanetTip();
+      return;
+    }
+    GX.selectedName = found.n;
+    tip.hidden = false;
+    tip.innerHTML =
+      '<b>' + esc(found.n) + '</b>' + (found.self ? '（你）' : '') + '<br>总分 ' + found.s + ' 分<br>普通 ' + found.m + '/10 · 隐藏 ' + found.b / 2 + '/5';
+    var cardRect = $('#galaxyCard').getBoundingClientRect();
+    tip.style.left = found._x + 'px';
+    tip.style.top = found._y - found.size - 6 + 'px';
+  }
+
+  /* ---------------- 彩带 ---------------- */
+  function confetti(n) {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var colors = ['#ffd166', '#ff8ac9', '#8b6cff', '#5ce1e6', '#fff3c4'];
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement('i');
+      s.className = 'confetti';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.background = colors[i % colors.length];
+      s.style.animationDelay = Math.random() * 0.5 + 's';
+      s.style.animationDuration = 1.7 + Math.random() * 1.3 + 's';
+      s.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+      document.body.appendChild(s);
+      (function (node) {
+        setTimeout(function () {
+          if (node.parentNode) node.parentNode.removeChild(node);
+        }, 3800);
+      })(s);
+    }
+  }
+
+  /* ---------------- 事件绑定 ---------------- */
+  function bindEvents() {
+    var input = $('#nickname');
+    input.addEventListener('compositionstart', function () {
+      composing = true;
+    });
+    input.addEventListener('compositionend', function () {
+      composing = false;
+      applyNameClamp();
+      updateNameUI();
+    });
+    input.addEventListener('input', function () {
+      if (!composing) applyNameClamp();
+      updateNameUI();
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (!$('#startBtn').disabled) startGame();
+      }
+    });
+    $('#startBtn').addEventListener('click', startGame);
+    $('#viewBoardBtn').addEventListener('click', function () {
+      showScreen('galaxy');
+    });
+    $('#nextBtn').addEventListener('click', confirmAnswer);
+    $('#bonusBtn').addEventListener('click', function () {
+      S.phase = 'bonus';
+      S.qi = 0;
+      selection = [];
+      renderQuestion();
+      showScreen('quiz');
+    });
+    $('#toGalaxyBtn').addEventListener('click', function () {
+      showScreen('galaxy');
+    });
+    $('#reviewBtn').addEventListener('click', openReview);
+    $('#closeReview').addEventListener('click', closeReview);
+    $('#reviewModal').addEventListener('click', function (e) {
+      if (e.target === $('#reviewModal')) closeReview();
+    });
+    $('#refreshBtn').addEventListener('click', function () {
+      if (!published) publishOwn();
+      pullBoard();
+      toast('正在刷新排行榜…', 1400);
+    });
+    $('#retrySyncBtn').addEventListener('click', function () {
+      setSync('syncing');
+      publishOwn().then(function () {
+        return pullBoard();
+      });
+    });
+    $('#copyBtn').addEventListener('click', function () {
+      var link = location.href.split('#')[0].split('?')[0];
+      copyText(link)
+        .then(function () {
+          toast('链接已复制，去微信发给朋友吧');
+        })
+        .catch(function () {
+          toast('复制失败，请长按页面地址手动复制');
+        });
+    });
+    $('#galaxyCanvas').addEventListener('click', onGalaxyClick);
+    window.addEventListener('resize', function () {
+      if (S.screen === 'galaxy') GXApi.resize();
+      resizeBg();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && S.screen === 'galaxy' && !S.demo && !S.selftest) pullBoard();
+    });
+  }
+
+  /* ---------------- 演示模式（?demo=） ---------------- */
+  function demoBoard(rows) {
+    return rows.map(function (r, i) {
+      var e = normalizeEntry({ v: 1, n: r[0], m: r[1], b: r[2] });
+      e.t = i + 1;
+      return e;
+    });
+  }
+
+  var DEMO_ROWS_9 = [
+    ['阿眠', 10, 10],
+    ['橘子', 10, 8],
+    ['小满', 9, 8],
+    ['月亮', 8, 8],
+    ['Kiki', 8, 6],
+    ['阿哲', 7, 6],
+    ['小林', 6, 4],
+    ['桃子', 4, 2],
+    ['布丁', 2, 2]
+  ];
+
+  var DEMO_ROWS_20 = [
+    ['阿眠', 10, 10],
+    ['橘子', 10, 8],
+    ['小满', 9, 8],
+    ['月亮', 9, 7],
+    ['Kiki', 9, 6],
+    ['阿哲', 8, 7],
+    ['小林', 8, 6],
+    ['桃子', 8, 4],
+    ['布丁', 7, 6],
+    ['豆豆', 7, 4],
+    ['小七', 6, 6],
+    ['夏夏', 6, 4],
+    ['阿瓜', 6, 2],
+    ['星星', 5, 4],
+    ['团子', 5, 2],
+    ['汽水', 4, 2],
+    ['阿蓝', 3, 2],
+    ['小鹿', 2, 2],
+    ['木木', 2, 0],
+    ['白白', 0, 0]
+  ];
+
+  function runDemo(kind) {
+    S.demo = true;
+    S.name = '小满';
+    S.board = demoBoard(kind === 'galaxy20' ? DEMO_ROWS_20 : DEMO_ROWS_9).sort(function (a, b) {
+      return b.s - a.s;
+    });
+    S.done = true;
+
+    if (kind === 'start') {
+      showScreen('start');
+      return;
+    }
+    S.result = {
+      name: '小满',
+      main: 9,
+      bonus: 8,
+      bonusCorrect: 4,
+      total: 17,
+      unlocked: true,
+      answers: { main: [], bonus: [] },
+      ts: Date.now()
+    };
+    if (kind === 'quiz') {
+      S.phase = 'main';
+      S.qi = 1;
+      S.mainAns = [];
+      S.bonusAns = [];
+      renderQuestion();
+      showScreen('quiz');
+      return;
+    }
+    if (kind === 'unlock') {
+      S.unlocked = true;
+      S.mainScore = 9;
+      $('#unlockScore').textContent = 9;
+      showScreen('unlock');
+      return;
+    }
+    if (kind === 'result') {
+      S.mainScore = 9;
+      S.bonusScore = 8;
+      S.total = 17;
+      S.unlocked = true;
+      renderResult();
+      showScreen('result');
+      return;
+    }
+    if (kind === 'review') {
+      S.unlocked = true;
+      S.mainAns = D.main.map(function (q) {
+        return q.ans.slice();
+      });
+      S.bonusAns = D.bonus.map(function (q) {
+        return q.ans.slice();
+      });
+      S.mainScore = 10;
+      S.bonusScore = 10;
+      S.total = 20;
+      S.result = {
+        name: '小满',
+        main: 10,
+        bonus: 10,
+        bonusCorrect: 5,
+        total: 20,
+        unlocked: true,
+        answers: { main: S.mainAns.slice(), bonus: S.bonusAns.slice() },
+        ts: Date.now()
+      };
+      renderResult();
+      showScreen('result');
+      openReview();
+      return;
+    }
+    /* galaxy */
+    onGalaxyShow();
+    showScreen('galaxy');
+  }
+
+  /* ---------------- 自测 ---------------- */
+  function runSelfTest() {
+    S.selftest = true;
+    var lines = [];
+    var fails = 0;
+    function ok(name, cond, extra) {
+      if (!cond) fails++;
+      lines.push((cond ? 'PASS ' : 'FAIL ') + name + (cond ? '' : '  <<< ' + (extra || '')));
+    }
+    try {
+      localStorage.removeItem(CONFIG.storage.result);
+      localStorage.removeItem(CONFIG.storage.board);
+    } catch (e) {}
+
+    try {
+    /* 1. 题库结构 */
+    ok('普通题 10 道', D.main.length === 10, D.main.length);
+    ok('附加题 5 道', D.bonus.length === 5, D.bonus.length);
+    var optsOK = D.main.concat(D.bonus).every(function (q) {
+      return q.opts && q.opts.length === 4;
+    });
+    ok('每题 4 个选项', optsOK);
+    var ansOK = D.main.concat(D.bonus).every(function (q) {
+      return q.ans && q.ans.length > 0 && q.ans.every(function (i) {
+        return i >= 0 && i <= 3;
+      });
+    });
+    ok('答案下标合法', ansOK);
+
+    /* 2. 判分 */
+    ok('单选判对', judge(D.main[0], [1]) === true);
+    ok('单选判错', judge(D.main[0], [0]) === false);
+    ok('单选多选算错', judge(D.main[0], [1, 2]) === false);
+    ok('空选算错', judge(D.main[0], []) === false);
+    ok('多选顺序无关', judge(D.main[4], [3, 1]) === true);
+    ok('多选漏选算错', judge(D.main[4], [1]) === false);
+    ok('多选多选算错', judge(D.main[4], [1, 3, 0]) === false);
+
+    /* 3. 计分 */
+    var allMain = D.main.map(function (q) {
+      return q.ans.slice();
+    });
+    var allBonus = D.bonus.map(function (q) {
+      return q.ans.slice();
+    });
+    ok('普通题满分 10', countCorrect(D.main, allMain) === 10);
+    ok('普通题 8 分', countCorrect(D.main, allMain.slice(0, 8)) === 8);
+    ok('附加题满分 5 题', countCorrect(D.bonus, allBonus) === 5);
+    ok('附加题折合 10 分', countCorrect(D.bonus, allBonus) * D.bonusPointsPerQuestion === 10);
+    S.mainScore = countCorrect(D.main, allMain.slice(0, 7));
+    ok('7 道不解锁', S.mainScore < D.unlockMainScore);
+    ok('8 道解锁', countCorrect(D.main, allMain.slice(0, 8)) >= D.unlockMainScore);
+
+    /* 4. 昵称限制 */
+    ok('昵称截断到 5', clampName('一二三四五六') === '一二三四五', clampName('一二三四五六'));
+    ok('昵称去首尾空格', clampName('  ab  ') === 'ab', clampName('  ab  '));
+    ok(
+      '昵称 emoji 按字符计数',
+      countChars(clampName('😀😀😀😀😀😀')) === 5,
+      clampName('😀😀😀😀😀😀')
+    );
+    ok('空昵称拒绝', clampName('   ') === '');
+
+    /* 5. 完整 UI 流程 */
+    var input = $('#nickname');
+    input.value = '小满';
+    input.dispatchEvent(new Event('input'));
+    ok('开始按钮可用', $('#startBtn').disabled === false);
+    $('#startBtn').click();
+    ok('进入答题页', $('#screen-quiz').classList.contains('active'));
+
+    function pick(list, allAnswers) {
+      list.forEach(function (q, i) {
+        allAnswers[i].forEach(function (idx) {
+          var btn = document.querySelector('#options .opt[data-i="' + idx + '"]');
+          if (btn) btn.click();
+        });
+        $('#nextBtn').click();
+      });
+    }
+
+    pick(D.main, allMain);
+    ok('10 题全对进入解锁页', $('#screen-unlock').classList.contains('active'));
+    ok('解锁页显示 10 分', $('#unlockScore').textContent === '10');
+    $('#bonusBtn').click();
+    ok('进入附加题', $('#screen-quiz').classList.contains('active'));
+    pick(D.bonus, allBonus);
+    ok('完成附加题进入结果页', $('#screen-result').classList.contains('active'));
+    ok('总分 20', $('#finalScore').textContent === '20', $('#finalScore').textContent);
+    ok('普通题 10/10', $('#bdMain').textContent === '10 / 10');
+    ok('隐藏题 5/5', $('#bdBonus').textContent.indexOf('5 / 5') === 0, $('#bdBonus').textContent);
+
+    S.result = {
+      name: '小满',
+      main: 10,
+      bonus: 10,
+      bonusCorrect: 5,
+      total: 20,
+      unlocked: true,
+      answers: { main: allMain, bonus: allBonus },
+      ts: Date.now()
+    };
+    mergeBoard([]);
+    ok('排行榜含自己', S.board.some(function (p) {
+      return p.self && p.n === '小满' && p.s === 20;
+    }));
+
+    openReview();
+    ok('回顾 15 题', $('#reviewList').querySelectorAll('.review-item').length === 15, $('#reviewList').querySelectorAll('.review-item').length);
+    closeReview();
+
+    /* 6. 演示数据渲染 */
+    try {
+      window.__HXQ_DEMO_CHECK = true;
+    } catch (e) {}
+    ok('星系数据可用', S.board.length >= 1);
+  } catch (e) {
+    fails++;
+    lines.push('FAIL 运行时异常: ' + (e && e.stack ? e.stack.split('\n')[0] : e));
+  }
+
+  var pre = $('#selftest');
+  if (pre) {
+    pre.hidden = false;
+    pre.textContent = lines.join('\n') + '\n\n' + (fails === 0 ? 'ALL PASS' : 'FAILURES: ' + fails);
+    document.title = fails === 0 ? 'SELFTEST_PASS' : 'SELFTEST_FAIL_' + fails;
+  }
+  window.__HXQ = {
+    S: S,
+    D: D,
+    judge: judge,
+    countCorrect: countCorrect,
+    clampName: clampName,
+    countChars: countChars,
+    mergeBoard: mergeBoard,
+    renderGalaxy: renderGalaxy,
+    showScreen: showScreen
+  };
+}
+
+  /* ---------------- 初始化 ---------------- */
+  function init() {
+    GX.canvas = $('#galaxyCanvas');
+    if (GX.canvas && GX.canvas.getContext) {
+      GX.ctx = GX.canvas.getContext('2d');
+      GX.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+    initBgStars();
+    bindEvents();
+    restoreLocal();
+    updateNameUI();
+
+    var params = new URLSearchParams(location.search);
+    var demoKind = params.get('demo');
+    var isSelftest = params.get('selftest') === '1';
+
+    if (isSelftest) {
+      runSelfTest();
+      return;
+    }
+    if (demoKind) {
+      runDemo(demoKind);
+      return;
+    }
+    showScreen('start');
+  }
+
+  /* 暴露给自测/调试（不影响正常玩法） */
+  window.__HXQ_BOOT = init;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
