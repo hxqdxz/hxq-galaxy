@@ -383,52 +383,59 @@ button {
   margin-top: 2px;
 }
 
-.continue .card {
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-radius: var(--r-lg);
+/* ---------- 已答过状态 ---------- */
+.done-card {
+  text-align: center;
+  padding: 26px 20px 22px;
 }
 
-.continue .c-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.continue .c-title {
-  font-size: 13.5px;
-  color: var(--muted);
-}
-
-.continue .c-score {
-  font-size: 20px;
-  font-weight: 800;
+.done-badge {
+  display: inline-block;
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
   color: var(--gold);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  background: rgba(255, 209, 102, 0.08);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 12px;
 }
 
-.continue .c-actions {
-  display: flex;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.mini-btn {
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.07);
+.done-name {
+  font-size: 19px;
+  font-weight: 700;
   color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 11px;
-  padding: 9px 12px;
-  cursor: pointer;
-  white-space: nowrap;
 }
 
-.mini-btn.gold {
-  background: linear-gradient(135deg, #ffe29a, #ffc94d);
-  color: #1c1303;
-  border-color: transparent;
+.done-score {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 4px 0 6px;
+  background: linear-gradient(180deg, #fff8e6 0%, #ffd166 60%, #ff8ac9 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.done-score span {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--muted);
+  -webkit-text-fill-color: var(--muted);
+}
+
+.done-rank {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.done-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* ---------- 答题页 ---------- */
@@ -1271,13 +1278,13 @@ button {
       <p class="lead">15 道题，测测你和我之间的引力<br />离恒星越近，代表你越懂我</p>
     </div>
 
-    <div class="card start-card">
+    <div class="card start-card" id="startCard">
       <label class="field-label" for="nickname">给自己起个昵称</label>
       <div class="name-row">
         <input id="nickname" class="name-input" maxlength="5" placeholder="最多 5 个字" autocomplete="off" autocapitalize="off" spellcheck="false" />
         <span id="nameCount" class="name-count">0/5</span>
       </div>
-      <p class="field-hint">昵称会出现在属于你的星球上</p>
+      <p class="field-hint">昵称会出现在属于你的星球上 · 同一台设备只能答一次</p>
       <button id="startBtn" class="btn primary" disabled>开始挑战</button>
     </div>
 
@@ -1287,7 +1294,7 @@ button {
       <div class="rule"><b>20</b><span>满分<br />答完看排行</span></div>
     </div>
 
-    <p class="start-tip">普通题答对 8 道，才会解锁隐藏附加题。<br />答完后，你会在星系里看到所有人的分数。</p>
+    <p class="start-tip" id="startTip">普通题答对 8 道，才会解锁隐藏附加题。<br />答完后，你会在星系里看到所有人的分数。</p>
     <div id="continueBox" class="continue"></div>
     <button id="viewBoardBtn" class="link-btn">先看看大家的星系 →</button>
   </section>
@@ -1538,11 +1545,11 @@ const GAME_DATA = {
     },
     {
       id: 'b5',
-      q: '综合计算题（压轴）：设 S 为用 4 种颜色给正六面体（立方体）的 6 个面染色的方案数（若两种染色能通过旋转立方体重合，则视为同一种）；又设 I = ∫₀¹ x⁴(1−x)³ dx。求 S + 1/I 的值。',
-      hint: '大学难度 · 纯计算，不看过程只看结果',
+      q: '综合计算题（压轴）：设 A 为用 3 种颜色给正二十面体的 20 个面染色、若两种染色能通过旋转重合则视为同一种时的方案数；B 为正十二面体图（20 个顶点、30 条棱）的生成树个数；C 为 ∫₀¹ x⁶(1−x)⁵ dx 的倒数。求 A + B + C 的值。',
+      hint: '大学难度 · 组合群论 + 矩阵树定理 + Beta 积分',
       opts: [
         '−1 + √3·i',
-        '520',
+        '63,319,599',
         'f(x) = e^(x²)·sin x + ln(1+x)',
         '+∞（正无穷大）'
       ],
@@ -1840,6 +1847,11 @@ const GAME_DATA = {
     if (input.value !== clamped) input.value = clamped;
   }
 
+  function hasDone() {
+    var r = lsGet(CONFIG.storage.result);
+    return !!(r && r.name && typeof r.total === 'number');
+  }
+
   function restoreLocal() {
     var name = lsGet(CONFIG.storage.name);
     if (typeof name === 'string' && name) {
@@ -1848,7 +1860,7 @@ const GAME_DATA = {
     var result = lsGet(CONFIG.storage.result);
     if (result && result.name && typeof result.total === 'number') {
       S.result = result;
-      renderContinue(result);
+      renderDoneState(result);
     }
     var board = lsGet(CONFIG.storage.board);
     if (Array.isArray(board)) {
@@ -1862,35 +1874,37 @@ const GAME_DATA = {
     updateNameUI();
   }
 
-  function renderContinue(result) {
+  /* 同一台设备/浏览器只能答一次：答过之后开始卡片会换成成绩卡 */
+  function renderDoneState(result) {
+    loadResultIntoState(result);
+    var startCard = $('#startCard');
+    if (startCard) startCard.style.display = 'none';
+    var viewBtn = $('#viewBoardBtn');
+    if (viewBtn) viewBtn.style.display = 'none';
+    var tip = $('#startTip');
+    if (tip) tip.textContent = '这台设备已经答过啦，一台设备只能答一次～';
     var box = $('#continueBox');
     if (!box) return;
     var rank = rankOf(result.total);
     box.innerHTML =
-      '<div class="card">' +
-      '<div class="c-info">' +
-      '<div class="c-title">上次成绩 · ' + esc(result.name) + ' · ' + esc(rank.title) + '</div>' +
-      '<div class="c-score">' + result.total + ' <span style="font-size:12px;color:#a9a2c9;font-weight:600">/ 20 分</span></div>' +
-      '</div>' +
-      '<div class="c-actions">' +
-      '<button class="mini-btn" id="viewOldBtn">看排行</button>' +
-      '<button class="mini-btn gold" id="restartBtn">再玩一次</button>' +
+      '<div class="card done-card">' +
+      '<div class="done-badge">已答过</div>' +
+      '<div class="done-name">' + esc(result.name) + '</div>' +
+      '<div class="done-score">' + result.total + '<span> / 20</span></div>' +
+      '<div class="done-rank">' + esc(rank.title) + ' · ' + esc(rank.desc) + '</div>' +
+      '<div class="done-actions">' +
+      '<button class="btn primary" id="doneViewBoard">看我的星系排行</button>' +
+      '<button class="btn ghost" id="doneReview">查看答题回顾</button>' +
       '</div>' +
       '</div>';
-    $('#viewOldBtn').addEventListener('click', function () {
+    $('#doneViewBoard').addEventListener('click', function () {
       loadResultIntoState(result);
       renderGalaxyFromState();
       showScreen('galaxy');
     });
-    $('#restartBtn').addEventListener('click', function () {
-      $('#nickname').value = clampName(result.name || '');
-      updateNameUI();
-      try {
-        localStorage.removeItem(CONFIG.storage.result);
-      } catch (e) {}
-      S.result = null;
-      $('#continueBox').innerHTML = '';
-      $('#nickname').focus();
+    $('#doneReview').addEventListener('click', function () {
+      loadResultIntoState(result);
+      openReview();
     });
   }
 
@@ -1907,6 +1921,10 @@ const GAME_DATA = {
 
   /* ---------------- 答题 ---------------- */
   function startGame() {
+    if (hasDone()) {
+      toast('这台设备已经答过啦，一台设备只能答一次');
+      return;
+    }
     var name = clampName($('#nickname').value);
     if (!name) {
       toast('先输入你的昵称吧');
@@ -1926,7 +1944,6 @@ const GAME_DATA = {
     published = false;
     try {
       lsSet(CONFIG.storage.name, name);
-      localStorage.removeItem(CONFIG.storage.result);
     } catch (e) {}
     $('#continueBox').innerHTML = '';
     renderQuestion();
@@ -3108,6 +3125,16 @@ const GAME_DATA = {
       showScreen('quiz');
       return;
     }
+    if (kind === 'bonus') {
+      S.phase = 'bonus';
+      S.qi = 4;
+      S.unlocked = true;
+      S.mainAns = [];
+      S.bonusAns = [];
+      renderQuestion();
+      showScreen('quiz');
+      return;
+    }
     if (kind === 'unlock') {
       S.unlocked = true;
       S.mainScore = 9;
@@ -3168,6 +3195,12 @@ const GAME_DATA = {
       localStorage.removeItem(CONFIG.storage.result);
       localStorage.removeItem(CONFIG.storage.board);
     } catch (e) {}
+    try {
+      var sc = document.getElementById('startCard');
+      if (sc) sc.style.display = '';
+      var cb = document.getElementById('continueBox');
+      if (cb) cb.innerHTML = '';
+    } catch (e) {}
 
     try {
     /* 1. 题库结构 */
@@ -3183,6 +3216,7 @@ const GAME_DATA = {
       });
     });
     ok('答案下标合法', ansOK);
+    ok('压轴题答案正确', D.bonus[4].ans[0] === 1 && D.bonus[4].opts[1].indexOf('63,319,599') >= 0, D.bonus[4].opts[1]);
 
     /* 2. 判分 */
     ok('单选判对', judge(D.main[0], [1]) === true);
@@ -3261,6 +3295,15 @@ const GAME_DATA = {
     ok('排行榜含自己', S.board.some(function (p) {
       return p.self && p.n === '小满' && p.s === 20;
     }));
+
+    /* 设备只能答一次 */
+    ok('答完后设备被锁定', hasDone() === true);
+    renderDoneState(S.result);
+    ok('锁定卡片出现', !!document.querySelector('#continueBox .done-card'));
+    ok('开始卡片已隐藏', document.getElementById('startCard').style.display === 'none');
+    var activeBefore = (document.querySelector('.screen.active') || {}).id;
+    startGame();
+    ok('锁定后不能再开始', (document.querySelector('.screen.active') || {}).id === activeBefore);
 
     openReview();
     ok('回顾 15 题', $('#reviewList').querySelectorAll('.review-item').length === 15, $('#reviewList').querySelectorAll('.review-item').length);
