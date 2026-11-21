@@ -1581,7 +1581,7 @@ const GAME_DATA = {
   var CONFIG = {
     ntfyBase: 'https://ntfy.sh',
     /* 公共同步主题：随机串，越随机越私密；换主题 = 换一个新排行榜 */
-    ntfyTopic: 'hxq-galaxy-4k9q2m7z',
+    ntfyTopic: 'hxq-galaxy-9q4m7v2k8x',
     pollMs: 8000,
     requestTimeout: 9000,
     storage: {
@@ -3347,6 +3347,17 @@ const GAME_DATA = {
     }
     initBgStars();
     bindEvents();
+
+    /* 隐藏用法：链接末尾加 #reset 可清除本机“已答过”记录（只给 HXQ 自己/需要重答的人用） */
+    if (location.hash === '#reset') {
+      try {
+        localStorage.removeItem(CONFIG.storage.result);
+      } catch (e) {}
+      try {
+        history.replaceState(null, '', location.pathname + location.search);
+      } catch (e) {}
+    }
+
     restoreLocal();
     updateNameUI();
 
